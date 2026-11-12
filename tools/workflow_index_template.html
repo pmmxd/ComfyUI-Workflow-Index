@@ -1,0 +1,2188 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ComfyUI 工作流总索引</title>
+  <style>
+    :root {
+      --ink: #202721;
+      --muted: #667068;
+      --line: #d8ddd7;
+      --surface: #ffffff;
+      --canvas: #f3f5f1;
+      --header: #203229;
+      --header-soft: #31473b;
+      --accent: #b66f18;
+      --accent-soft: #f6ead8;
+      --green: #1e6b47;
+      --green-soft: #e7f2eb;
+      --red: #a83b35;
+      --red-soft: #fae9e7;
+      --blue: #34628b;
+      --blue-soft: #e8f0f7;
+      --gray: #727a73;
+      --gray-soft: #eef0ed;
+      --shadow: 0 12px 36px rgba(24, 35, 28, .18);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+      font-size: 14px;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .topbar {
+      background: var(--header);
+      color: #f7faf7;
+      min-height: 58px;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      min-width: 0;
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 650;
+      letter-spacing: 0;
+    }
+    .brand span {
+      color: #b8c8bd;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .top-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .comfy-config {
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: #c8d5cc;
+      font-size: 12px;
+    }
+    .comfy-config input {
+      width: 220px;
+      height: 34px;
+      padding: 0 10px;
+      border: 1px solid #52695b;
+      border-radius: 6px;
+      background: #18281f;
+      color: #f7faf7;
+      outline: none;
+    }
+    .comfy-config input:focus { border-color: #9eb2a4; }
+
+    .button {
+      min-height: 34px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      background: var(--surface);
+      color: var(--ink);
+      white-space: nowrap;
+    }
+    .button:hover { border-color: #9ba99f; }
+    .button.dark {
+      background: var(--header-soft);
+      color: #f7faf7;
+      border-color: #52695b;
+    }
+    .button.dark:hover { border-color: #819788; }
+    .button.quiet {
+      background: transparent;
+      border-color: var(--line);
+      color: var(--muted);
+    }
+    .button svg, .icon-button svg { width: 16px; height: 16px; }
+    .icon-button {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: #4f5c53;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .icon-button:hover { border-color: #93a096; color: var(--ink); }
+
+    .filters {
+      background: #fbfcfa;
+      border-bottom: 1px solid var(--line);
+      padding: 12px 20px 10px;
+    }
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .search-wrap { position: relative; flex: 1 1 320px; }
+    .search-wrap svg {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      width: 16px;
+      height: 16px;
+      transform: translateY(-50%);
+      color: #718077;
+      pointer-events: none;
+    }
+    .search-wrap input {
+      width: 100%;
+      height: 36px;
+      padding: 0 12px 0 36px;
+      border: 1px solid #cbd2cc;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+    }
+    .search-wrap input:focus,
+    select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 2px rgba(30, 107, 71, .12);
+    }
+    select {
+      height: 36px;
+      min-width: 132px;
+      max-width: 210px;
+      flex: 0 1 160px;
+      border: 1px solid #cbd2cc;
+      border-radius: 6px;
+      padding: 0 30px 0 10px;
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+    }
+    .check-label {
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .check-label input { accent-color: var(--green); }
+    .chip-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 9px;
+    }
+    .chip-label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-right: 2px;
+    }
+    .chip {
+      min-height: 27px;
+      border: 1px solid #cdd4ce;
+      border-radius: 999px;
+      padding: 0 10px;
+      background: #fff;
+      color: #637067;
+    }
+    .chip.active {
+      color: #f8fbf8;
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    main { padding: 12px 20px 20px; }
+    .summary {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      min-height: 36px;
+      margin-bottom: 8px;
+      color: var(--muted);
+    }
+    .summary strong { color: var(--ink); font-size: 16px; }
+    .summary .spacer { flex: 1; }
+    .summary-filter {
+      min-height: 30px;
+      padding: 3px 9px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .summary-filter:hover { border-color: var(--line); background: #fff; }
+    .summary-filter.active {
+      border-color: #86a997;
+      background: var(--green-soft);
+      color: var(--green);
+    }
+    .summary-filter.active strong { color: var(--green); }
+    .view-tabs {
+      min-height: 44px;
+      padding: 5px 20px 0;
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      background: #fbfcfa;
+      border-bottom: 1px solid var(--line);
+    }
+    .view-tab {
+      min-height: 38px;
+      padding: 0 15px;
+      border: 1px solid transparent;
+      border-bottom: 0;
+      border-radius: 7px 7px 0 0;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .view-tab:hover { color: var(--ink); background: #f1f4ef; }
+    .view-tab.active {
+      color: var(--green);
+      background: var(--surface);
+      border-color: var(--line);
+    }
+    [hidden] { display: none !important; }
+    .scene-main { padding: 18px 20px 36px; }
+    .scene-intro {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 14px;
+    }
+    .scene-intro h2 { margin: 0 0 4px; font-size: 22px; }
+    .scene-intro p { margin: 0; color: var(--muted); }
+    .ranking-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .ranking-block {
+      min-width: 0;
+      padding: 14px 16px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-top: 3px solid var(--green);
+      border-radius: var(--radius);
+    }
+    .ranking-block h3 {
+      margin: 0 0 10px;
+      font-size: 15px;
+      color: #2f4939;
+    }
+    .ranking-list {
+      margin: 0;
+      padding-left: 23px;
+      color: #3f4d44;
+    }
+    .ranking-list li { padding: 4px 0 4px 2px; }
+    .ranking-list li::marker { color: var(--accent); font-weight: 700; }
+    .scene-section {
+      padding: 18px 0;
+      border-top: 1px solid var(--line);
+    }
+    .scene-section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 10px;
+    }
+    .scene-section-head h2 { margin: 0; font-size: 18px; }
+    .scene-section-head p { margin: 0; color: var(--muted); font-size: 12px; }
+    .scene-table-wrap {
+      overflow: auto;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    .guide-table {
+      min-width: 980px;
+      table-layout: fixed;
+    }
+    .guide-table.coverage-table { min-width: 1080px; }
+    .guide-table td {
+      line-height: 1.5;
+      overflow: visible;
+      text-overflow: clip;
+    }
+    .guide-table th:nth-child(1), .guide-table td:nth-child(1) { width: 18%; }
+    .guide-table th:nth-child(2), .guide-table td:nth-child(2) { width: 25%; }
+    .guide-table th:nth-child(3), .guide-table td:nth-child(3) { width: 34%; }
+    .guide-table th:nth-child(4), .guide-table td:nth-child(4) { width: 23%; }
+    .coverage-table th:nth-child(1), .coverage-table td:nth-child(1) { width: 20%; }
+    .coverage-table th:nth-child(2), .coverage-table td:nth-child(2) { width: 48%; }
+    .coverage-table th:nth-child(3), .coverage-table td:nth-child(3) { width: 32%; }
+    .guide-table code, .ranking-list code {
+      padding: 1px 4px;
+      border-radius: 3px;
+      background: #eef2ed;
+      color: #2f5140;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 12px;
+    }
+    .scene-workflow-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 7px;
+    }
+    .scene-workflow-link {
+      min-height: 26px;
+      padding: 2px 8px;
+      border: 1px solid #b9cabc;
+      border-radius: 5px;
+      background: #f5f8f4;
+      color: var(--green);
+      font-size: 12px;
+    }
+    .scene-workflow-link:hover { border-color: var(--green); background: var(--green-soft); }
+    .scene-unmatched { color: var(--red); font-size: 12px; }
+    .table-wrap {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      overflow: auto;
+      max-height: calc(100vh - 238px);
+    }
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+      min-width: 1940px;
+      table-layout: fixed;
+    }
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #edf1ec;
+      color: #4e5d54;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      font-size: 12px;
+      font-weight: 650;
+      padding: 9px 10px;
+      white-space: nowrap;
+    }
+    tbody td {
+      border-bottom: 1px solid #edf0ec;
+      padding: 9px 10px;
+      vertical-align: top;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    tbody tr:hover { background: #f7faf6; }
+    tbody tr.premium { background: #fdfbf5; }
+    tbody tr.premium:hover { background: #faf5e8; }
+    tbody tr:last-child td { border-bottom: 0; }
+    .name-line { display: flex; align-items: center; gap: 6px; min-width: 0; }
+    .name {
+      min-width: 0;
+      overflow: hidden;
+      font-weight: 650;
+      color: #24332a;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .favorite-toggle {
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      border: 1px solid #c8d1ca;
+      border-radius: 5px;
+      background: #fff;
+      color: #738078;
+      flex: none;
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .favorite-toggle:hover { border-color: #b58435; color: #9a6414; }
+    .favorite-toggle.active {
+      border-color: #d4a24e;
+      background: #fff3d8;
+      color: #a76500;
+    }
+    .inline-open {
+      flex: none;
+      min-height: 24px;
+      padding: 0 7px;
+      border: 1px solid #b9d7c6;
+      border-radius: 5px;
+      background: #e8f4ed;
+      color: #17633f;
+      font: 600 11px/1 "Segoe UI", "Microsoft YaHei", sans-serif;
+      cursor: pointer;
+    }
+    .inline-open:hover { background: #dceee3; }
+    .subline {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+    .rating {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+    .rating-stars {
+      color: #b66f18;
+      letter-spacing: 0;
+      font-size: 13px;
+    }
+    .rec {
+      display: inline-flex;
+      align-items: center;
+      min-height: 21px;
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+    .rec-推荐 { color: #135f40; background: var(--green-soft); }
+    .rec-备选 { color: #8a540d; background: var(--accent-soft); }
+    .rec-不推荐 { color: #7d4a46; background: var(--red-soft); }
+    .mini-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      margin-top: 4px;
+    }
+    .mini-tag {
+      color: #57665d;
+      background: #eef2ed;
+      border: 1px solid #dfe5df;
+      border-radius: 4px;
+      padding: 0 4px;
+      font-size: 10px;
+      line-height: 16px;
+      max-width: 110px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .priority-12G首选 { background: #e3f4ef; color: #125f4a; }
+    .priority-场景主流程 { background: #f7ead8; color: #8a4e0d; }
+    .priority-FLUX3专题 { background: #e5eef9; color: #225a8a; }
+    .priority-精品展示 { background: #e7eff7; color: #285b84; }
+    .priority-分类流程 { background: #edf0ed; color: #5e6b62; }
+    .priority-归档 { background: #f0f1f0; color: #858d87; }
+    .status { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gray); }
+    .status-本地可用 .dot { background: var(--green); }
+    .status-需API .dot { background: var(--accent); }
+    .status-需补模型 .dot, .status-缺模型 .dot { background: var(--red); }
+    .status-旧版 .dot, .status-半成品 .dot { background: #9aa09b; }
+    .storage {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 1px 7px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+    .storage-E盘完整 { color: #17633f; background: #e8f4ed; border-color: #b9d7c6; }
+    .storage-G盘依赖 { color: #9a5b0b; background: #fff1d9; border-color: #e6c78e; }
+    .storage-混合来源 { color: #7a5410; background: #f9efcf; border-color: #dbc27f; }
+    .storage-模型缺失 { color: #9a342f; background: #fae9e7; border-color: #e5bbb7; }
+    .storage-未使用本地模型 { color: #68726c; background: #eef1ee; }
+    .feature {
+      color: #4d5c53;
+      line-height: 1.45;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .scene-note {
+      color: #4d5c53;
+      font-size: 12px;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .muted { color: var(--muted); }
+    .io { font-size: 12px; color: #4c5c53; white-space: nowrap; }
+    .moved-time { font-size: 12px; color: #536158; white-space: nowrap; }
+    .media-strip { display: flex; align-items: center; gap: 5px; min-height: 34px; }
+    .media-thumb {
+      width: 42px;
+      height: 34px;
+      padding: 0;
+      border: 1px solid #cbd5ce;
+      border-radius: 5px;
+      background: #e9eeea;
+      overflow: hidden;
+      position: relative;
+      flex: 0 0 auto;
+    }
+    .media-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .media-thumb .play {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      background: rgba(10, 18, 13, .28);
+      font-size: 15px;
+    }
+    .media-more {
+      min-width: 34px;
+      height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: #f1f4f1;
+      color: #4f5d54;
+      font-size: 12px;
+    }
+    .media-empty { color: #9aa29c; font-size: 12px; }
+    .path-cell {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+    }
+    .path-text {
+      min-width: 0;
+      flex: 1;
+      color: #536158;
+      font-family: Consolas, "Cascadia Mono", monospace;
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .copy-row {
+      flex: 0 0 auto;
+      width: 27px;
+      height: 27px;
+    }
+    .open-row {
+      flex: 0 0 auto;
+      width: 27px;
+      height: 27px;
+      color: var(--blue);
+    }
+    .empty {
+      padding: 64px 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      background: rgba(22, 31, 25, .32);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .16s ease;
+    }
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      z-index: 21;
+      width: min(560px, 94vw);
+      height: 100vh;
+      background: #fbfcfa;
+      border-left: 1px solid #cbd2cc;
+      box-shadow: var(--shadow);
+      transform: translateX(102%);
+      transition: transform .18s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer.open { transform: translateX(0); }
+    .drawer-head {
+      background: var(--header);
+      color: #f7faf7;
+      padding: 15px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .drawer-head h2 {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.35;
+      flex: 1;
+      overflow-wrap: anywhere;
+    }
+    .drawer-body { overflow: auto; padding: 16px; }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 110px minmax(0, 1fr);
+      gap: 8px 12px;
+      margin-bottom: 18px;
+    }
+    .detail-grid dt { color: var(--muted); font-size: 12px; }
+    .detail-grid dd { margin: 0; overflow-wrap: anywhere; }
+    .detail-path {
+      background: #eff3ee;
+      border: 1px solid #d7ded7;
+      border-radius: 6px;
+      padding: 9px 10px;
+      font-family: Consolas, "Cascadia Mono", monospace;
+      font-size: 12px;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+      margin-bottom: 12px;
+    }
+    .detail-section { margin-top: 18px; }
+    .detail-section h3 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      color: #39473e;
+    }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 5px; }
+    .tag {
+      background: #edf1ec;
+      border: 1px solid #dbe1db;
+      border-radius: 5px;
+      padding: 3px 6px;
+      font-size: 11px;
+      color: #526057;
+      overflow-wrap: anywhere;
+    }
+    .detail-actions { display: flex; gap: 8px; margin-bottom: 8px; }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 30;
+      transform: translate(-50%, 16px);
+      background: #203229;
+      color: #fff;
+      border-radius: 6px;
+      padding: 9px 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all .16s ease;
+      box-shadow: 0 8px 24px rgba(20, 30, 24, .22);
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    .media-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 32;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(9, 14, 11, .72);
+    }
+    .media-modal.open { display: flex; }
+    .media-modal-box {
+      width: min(1120px, 96vw);
+      max-height: 94vh;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #52645a;
+      border-radius: 8px;
+      background: #f7f9f7;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .media-modal-head {
+      min-height: 50px;
+      padding: 9px 14px;
+      background: var(--header);
+      color: #f7faf7;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .media-modal-head h2 {
+      flex: 1;
+      margin: 0;
+      font-size: 16px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .media-modal-body {
+      min-height: 0;
+      overflow: auto;
+      padding: 14px;
+    }
+    .media-viewer {
+      min-height: 280px;
+      max-height: 66vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      background: #0c120e;
+      overflow: hidden;
+    }
+    .media-viewer img,
+    .media-viewer video {
+      max-width: 100%;
+      max-height: 66vh;
+      display: block;
+    }
+    .media-viewer audio { width: min(720px, 92%); }
+    .media-viewer-caption {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+    .media-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 10px 0 2px;
+    }
+    .media-tab {
+      width: 74px;
+      height: 54px;
+      padding: 0;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      background: #dde4df;
+      overflow: hidden;
+      flex: 0 0 auto;
+    }
+    .media-tab.active { border-color: var(--green); }
+    .media-tab img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .media-tab.audio { color: #9b6318; font-size: 20px; }
+
+    @media (max-width: 720px) {
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .top-actions { width: 100%; justify-content: flex-start; }
+      .comfy-config { flex: 1 1 100%; }
+      .comfy-config input { width: auto; min-width: 0; flex: 1; }
+      .filters, main { padding-left: 10px; padding-right: 10px; }
+      .view-tabs { padding-left: 10px; padding-right: 10px; }
+      .scene-main { padding-left: 10px; padding-right: 10px; }
+      .scene-intro { align-items: flex-start; flex-direction: column; gap: 5px; }
+      .ranking-grid { grid-template-columns: 1fr; }
+      .scene-section-head { align-items: flex-start; flex-direction: column; gap: 4px; }
+      .search-wrap { flex-basis: 100%; }
+      select { flex: 1 1 calc(50% - 8px); max-width: none; }
+      .check-label, #reset { flex: 1 1 calc(50% - 8px); }
+      .table-wrap { max-height: calc(100vh - 300px); }
+      .media-modal { padding: 8px; }
+      .media-modal-box { width: 100%; max-height: 98vh; }
+    }
+
+    .migration-main { padding: 18px 20px 36px; }
+    .migration-intro {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+    .migration-intro h2 { margin: 0 0 4px; font-size: 22px; }
+    .migration-intro p { margin: 0; color: var(--muted); }
+    .migration-toolbar { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+    .migration-filter {
+      min-height: 30px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--muted);
+    }
+    .migration-filter.active { color: var(--green); border-color: #86a997; background: var(--green-soft); }
+    .migration-list { display: grid; gap: 10px; }
+    .migration-card {
+      min-width: 0;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-left: 4px solid #a5b1a9;
+      border-radius: 8px;
+      background: var(--surface);
+    }
+    .migration-card.priority-高 { border-left-color: var(--red); }
+    .migration-card.priority-中 { border-left-color: var(--accent); }
+    .migration-card.priority-低 { border-left-color: #87928b; }
+    .migration-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    .migration-file { font-weight: 700; overflow-wrap: anywhere; }
+    .migration-priority {
+      flex: none;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #657069;
+      background: #eef1ee;
+    }
+    .migration-card.priority-高 .migration-priority { color: var(--red); background: var(--red-soft); }
+    .migration-card.priority-中 .migration-priority { color: #915b0d; background: var(--accent-soft); }
+    .migration-meta { margin-top: 6px; color: var(--muted); font-size: 12px; }
+    .migration-paths { display: grid; gap: 5px; margin-top: 9px; }
+    .migration-path {
+      padding: 6px 8px;
+      border-radius: 5px;
+      background: #f1f4f1;
+      color: #435047;
+      font: 11px/1.45 Consolas, "Cascadia Mono", monospace;
+      overflow-wrap: anywhere;
+    }
+    .migration-actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+    .migration-empty { color: var(--muted); padding: 30px 0; text-align: center; }
+
+    html.embedded, html.embedded body { height: 100%; overflow: hidden; }
+    html.embedded body { display: flex; flex-direction: column; font-size: 13px; }
+    html.embedded .topbar {
+      min-height: 0;
+      padding: 8px 10px;
+      align-items: stretch;
+      flex: none;
+      flex-direction: column;
+      gap: 7px;
+    }
+    html.embedded .brand { justify-content: space-between; align-items: center; }
+    html.embedded .brand h1 {
+      min-width: 0;
+      overflow: hidden;
+      font-size: 15px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    html.embedded .brand span { font-size: 10px; }
+    html.embedded .comfy-config { display: none; }
+    html.embedded .top-actions {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 6px;
+    }
+    html.embedded .top-actions .button {
+      min-width: 0;
+      min-height: 30px;
+      padding: 0 6px;
+      overflow: hidden;
+      font-size: 11px;
+      text-overflow: ellipsis;
+    }
+    html.embedded .view-tabs {
+      min-height: 36px;
+      padding: 3px 8px 0;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      flex: none;
+    }
+    html.embedded .view-tab {
+      width: 100%;
+      min-width: 0;
+      min-height: 32px;
+      padding: 0 10px;
+      font-size: 12px;
+    }
+    html.embedded .view-panel { min-height: 0; flex: 1 1 auto; overflow: hidden; }
+    html.embedded #indexView.view-panel { display: flex; flex-direction: column; }
+    html.embedded #sceneView.scene-main {
+      min-height: 0;
+      padding: 8px 10px 20px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      flex: 1 1 auto;
+      scrollbar-gutter: stable;
+      scrollbar-color: #789184 #e6ece7;
+      scrollbar-width: thin;
+    }
+    html.embedded #migrationView.migration-main {
+      min-height: 0;
+      padding: 8px 10px 20px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      flex: 1 1 auto;
+      scrollbar-gutter: stable;
+      scrollbar-color: #789184 #e6ece7;
+      scrollbar-width: thin;
+    }
+    html.embedded #sceneView.scene-main::-webkit-scrollbar { width: 10px; }
+    html.embedded #sceneView.scene-main::-webkit-scrollbar-track { background: #e6ece7; }
+    html.embedded #sceneView.scene-main::-webkit-scrollbar-thumb {
+      border: 2px solid #e6ece7;
+      border-radius: 6px;
+      background: #789184;
+    }
+    html.embedded .filters {
+      max-height: 42vh;
+      padding: 7px 8px;
+      overflow: auto;
+      flex: none;
+    }
+    html.embedded .filter-row { gap: 5px; }
+    html.embedded .search-wrap { flex-basis: 100%; }
+    html.embedded .search-wrap input { height: 32px; font-size: 12px; }
+    html.embedded select {
+      min-width: 0;
+      max-width: none;
+      height: 32px;
+      padding: 0 22px 0 7px;
+      flex: 1 1 calc(50% - 3px);
+      font-size: 11px;
+    }
+    html.embedded .check-label,
+    html.embedded #reset {
+      min-height: 30px;
+      flex: 1 1 calc(50% - 3px);
+      font-size: 11px;
+    }
+    html.embedded .chip-row {
+      max-width: 100%;
+      margin-top: 6px;
+      padding-bottom: 2px;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      gap: 4px;
+    }
+    html.embedded .chip-label,
+    html.embedded .chip { flex: none; }
+    html.embedded .chip {
+      min-height: 24px;
+      padding: 0 7px;
+      font-size: 11px;
+    }
+    html.embedded main {
+      min-height: 0;
+      padding: 7px 8px 10px;
+      display: flex;
+      flex: 1 1 auto;
+      flex-direction: column;
+    }
+    html.embedded .summary {
+      min-height: 0;
+      margin-bottom: 6px;
+      flex: none;
+      gap: 3px 5px;
+      font-size: 11px;
+    }
+    html.embedded .summary strong { font-size: 13px; }
+    html.embedded .summary-filter {
+      min-height: 25px;
+      padding: 1px 6px;
+      font-size: 10px;
+    }
+    html.embedded #sortHint,
+    html.embedded .summary .spacer { display: none; }
+    html.embedded .table-wrap {
+      max-height: none;
+      min-height: 240px;
+      flex: 1 1 auto;
+    }
+  </style>
+  <script>
+    if (new URLSearchParams(location.search).has("embedded")) {
+      document.documentElement.classList.add("embedded");
+    }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <h1>ComfyUI 工作流总索引</h1>
+      <span>更新于 __GENERATED_AT__</span>
+    </div>
+    <div class="top-actions">
+      <label class="comfy-config" title="修改后自动保存，只填写 ComfyUI 首页地址">
+        <span>ComfyUI</span>
+        <input id="comfyBase" type="url" value="http://127.0.0.1:8188/" aria-label="ComfyUI 地址">
+      </label>
+      <a class="button dark" href="媒体预览测试.html" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M17 3v18M3 7h4M17 7h4M3 17h4M17 17h4"/></svg>
+        媒体预览测试
+      </a>
+      <button class="button dark" id="copyFiltered" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        复制筛选路径
+      </button>
+    </div>
+  </header>
+
+  <nav class="view-tabs" aria-label="页面视图">
+    <button class="view-tab active" type="button" data-view-tab="index">工作流索引</button>
+    <button class="view-tab" type="button" data-view-tab="scenes">场景总览</button>
+    <button class="view-tab" type="button" data-view-tab="migrations">模型迁移</button>
+  </nav>
+
+  <div id="indexView" class="view-panel">
+  <section class="filters" aria-label="筛选条件">
+    <div class="filter-row">
+      <label class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="search" type="search" placeholder="搜索名称、详细场景、功能、模型、节点、路径或移入时间">
+      </label>
+      <select id="sort" aria-label="排序">
+        <option value="premium">精品优先</option>
+        <option value="name">名称</option>
+        <option value="date">日期从新到旧</option>
+        <option value="movedDesc">移入时间从新到旧</option>
+        <option value="modelSize">模型体积从大到小</option>
+        <option value="status">状态</option>
+      </select>
+      <select id="rating" aria-label="评级">
+        <option value="">全部评级</option>
+        <option value="5">5 星</option>
+        <option value="4">4 星及以上</option>
+        <option value="3">3 星及以上</option>
+        <option value="2">2 星及以上</option>
+        <option value="1">1 星及以上</option>
+      </select>
+      <select id="recommendation" aria-label="推荐级别">
+        <option value="">全部推荐级别</option>
+        <option value="推荐">推荐</option>
+        <option value="备选">备选</option>
+        <option value="不推荐">不推荐</option>
+      </select>
+      <select id="category" aria-label="分类"><option value="">全部分类</option></select>
+      <select id="family" aria-label="模型家族"><option value="">全部模型</option></select>
+      <select id="tag" aria-label="推荐标签"><option value="">全部标签</option></select>
+      <select id="media" aria-label="输入输出">
+        <option value="">全部输入输出</option>
+        <option value="图像">图像</option>
+        <option value="视频">视频</option>
+        <option value="音频">音频</option>
+        <option value="文本">文本</option>
+      </select>
+      <select id="contentPresence" aria-label="生成内容">
+        <option value="">全部生成内容</option>
+        <option value="has">有生成内容</option>
+        <option value="none">无生成内容</option>
+      </select>
+      <select id="moved" aria-label="移入时间">
+        <option value="">全部移入时间</option>
+        <option value="today">今天移入</option>
+        <option value="7d">近 7 天移入</option>
+        <option value="30d">近 30 天移入</option>
+        <option value="month">本月移入</option>
+        <option value="year">今年移入</option>
+      </select>
+      <label class="check-label"><input id="usableOnly" type="checkbox"> 仅本地可用</label>
+      <button class="button quiet" id="reset" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+        重置
+      </button>
+    </div>
+    <div class="chip-row">
+      <span class="chip-label">优先级</span>
+      <div id="priorityChips" class="chip-row" style="margin:0"></div>
+      <span class="chip-label" style="margin-left:8px">状态</span>
+      <div id="statusChips" class="chip-row" style="margin:0"></div>
+    </div>
+  </section>
+
+  <main>
+    <div class="summary">
+      <span><strong id="visibleCount">0</strong> / <span id="totalCount">0</span> 套</span>
+      <button class="summary-filter" type="button" data-summary-filter="local">本地可用 <strong id="localCount">0</strong></button>
+      <button class="summary-filter" type="button" data-summary-filter="favorites" title="筛选我标记的个人精品">个人精品 <strong id="favoriteCount">0</strong></button>
+      <button class="summary-filter" type="button" data-summary-filter="e-storage" title="全部模型均在E盘SSD">E盘完整 <strong id="eStorageCount">0</strong></button>
+      <button class="summary-filter" type="button" data-summary-filter="g-storage" title="至少依赖一个仅存于G盘的模型">G盘依赖 <strong id="gStorageCount">0</strong></button>
+      <button class="summary-filter" type="button" data-summary-filter="migration" title="当前工作流依赖仅存于G盘模型">待迁移 <strong id="migrationWorkflowCount">0</strong></button>
+      <button class="summary-filter" type="button" data-summary-filter="recommended">推荐 <strong id="recommendedCount">0</strong></button>
+      <button class="summary-filter" type="button" data-summary-filter="api">需 API <strong id="apiCount">0</strong></button>
+      <button class="summary-filter" type="button" data-summary-filter="missing" title="筛选需补模型工作流">缺模型 <strong id="missingCount">0</strong></button>
+      <span class="spacer"></span>
+      <span id="sortHint">12G首选 / 场景主流程 / FLUX3专题 / 精品展示优先，同层按评级</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <colgroup>
+          <col style="width:250px">
+          <col style="width:120px">
+          <col style="width:100px">
+          <col style="width:100px">
+          <col style="width:138px">
+          <col style="width:270px">
+          <col style="width:230px">
+          <col style="width:110px">
+          <col style="width:100px">
+          <col style="width:170px">
+          <col style="width:360px">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>名称</th>
+            <th>评级</th>
+            <th>状态</th>
+            <th>存储</th>
+            <th>移入时间</th>
+            <th>场景</th>
+            <th>核心功能</th>
+            <th>模型</th>
+            <th>输入 / 输出</th>
+            <th>生成内容</th>
+            <th>硬盘位置</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div id="empty" class="empty" hidden>没有匹配的工作流</div>
+    </div>
+  </main>
+  </div>
+
+  <main id="sceneView" class="scene-main" hidden>
+    <div class="scene-intro">
+      <div>
+        <h2>场景总览</h2>
+        <p id="sceneGuideDate">场景模型建议与工作流覆盖</p>
+      </div>
+      <p id="sceneCoverageSummary">正在读取场景数据</p>
+    </div>
+
+    <section class="scene-section" aria-labelledby="rankingTitle">
+      <div class="scene-section-head">
+        <h2 id="rankingTitle">当前综合排行</h2>
+        <p>按当前已安装模型、工作流完整度和 12GB 实际可用性整理</p>
+      </div>
+      <div id="rankingGrid" class="ranking-grid"></div>
+    </section>
+
+    <section class="scene-section" aria-labelledby="sceneModelsTitle">
+      <div class="scene-section-head">
+        <h2 id="sceneModelsTitle">各场景推荐模型</h2>
+        <p>推荐模型、当前工作流默认与 12GB 使用建议</p>
+      </div>
+      <div class="scene-table-wrap">
+        <table class="guide-table">
+          <thead id="sceneModelHead"></thead>
+          <tbody id="sceneModelBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="scene-section" aria-labelledby="coverageTitle">
+      <div class="scene-section-head">
+        <h2 id="coverageTitle">场景工作流覆盖</h2>
+        <p>可直接点击工作流名称回到索引定位</p>
+      </div>
+      <div class="scene-table-wrap">
+        <table class="guide-table coverage-table">
+          <thead id="coverageHead"></thead>
+          <tbody id="coverageBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <main id="migrationView" class="migration-main" hidden>
+    <div class="migration-intro">
+      <div>
+        <h2>模型迁移</h2>
+        <p>仅统计当前依赖 G 盘、且 E 盘没有同名文件的模型</p>
+      </div>
+      <p id="migrationSummary">正在读取迁移数据</p>
+    </div>
+    <div class="migration-toolbar" aria-label="迁移优先级">
+      <button class="migration-filter active" type="button" data-migration-filter="">全部</button>
+      <button class="migration-filter" type="button" data-migration-filter="高">高优先级</button>
+      <button class="migration-filter" type="button" data-migration-filter="中">中优先级</button>
+      <button class="migration-filter" type="button" data-migration-filter="低">低优先级</button>
+    </div>
+    <div id="migrationList" class="migration-list"></div>
+    <div id="migrationEmpty" class="migration-empty" hidden>没有符合条件的迁移模型</div>
+  </main>
+
+  <div class="drawer-overlay" id="overlay"></div>
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <h2 id="drawerTitle"></h2>
+      <button class="icon-button" id="drawerClose" type="button" title="关闭" aria-label="关闭">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+  </aside>
+  <div class="media-modal" id="mediaModal" aria-hidden="true">
+    <div class="media-modal-box" role="dialog" aria-modal="true" aria-labelledby="mediaModalTitle">
+      <div class="media-modal-head">
+        <h2 id="mediaModalTitle">生成内容</h2>
+        <button class="icon-button" id="mediaModalClose" type="button" title="关闭" aria-label="关闭">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="media-modal-body">
+        <div class="media-viewer" id="mediaViewer"></div>
+        <div class="media-viewer-caption" id="mediaCaption"></div>
+        <div class="media-tabs" id="mediaTabs"></div>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const DATA = __WORKFLOW_DATA__;
+    const rows = DATA.rows.map((row, index) => ({ ...row, _index: index }));
+    const rowByIndex = new Map(rows.map(row => [row._index, row]));
+    const sceneGuides = DATA.sceneGuides || { rankings: [], sceneModels: { headers: [], rows: [] }, coverage: [] };
+    const modelMigrations = DATA.modelMigrations || { generatedAt: "", models: [] };
+    const DEFAULT_COMFY_BASE = "http://127.0.0.1:8188";
+    const COMFY_BASE_KEY = "dapao.workflowIndex.comfyBase";
+    const COMFY_BASE_MIGRATION_KEY = "dapao.workflowIndex.comfyBaseMigrated8188";
+    const FAVORITES_CACHE_KEY = "dapao.workflowIndex.personalFavorites.v1";
+    const FAVORITES_API_PATH = "/dapao/workflow-favorites";
+    const EMBEDDED_MODE = new URLSearchParams(window.location.search).has("embedded");
+    const priorityOrder = { "12G首选": 0, "场景主流程": 1, "FLUX3专题": 2, "精品展示": 3, "分类流程": 4, "归档": 5 };
+    const statusOrder = { "本地可用": 0, "需API": 1, "需补模型": 2, "缺模型": 2, "旧版": 3, "半成品": 4 };
+    const priorities = ["12G首选", "场景主流程", "FLUX3专题", "精品展示", "分类流程", "归档"];
+    const statuses = ["本地可用", "需API", "需补模型", "缺模型", "旧版", "半成品"];
+    const selectedPriorities = new Set(priorities);
+    const selectedStatuses = new Set(statuses);
+    let currentRows = [];
+    let drawerRow = null;
+    let activeSummaryFilter = "";
+    let currentMediaRow = null;
+    let currentMediaItems = [];
+    let activeMigrationPriority = "";
+    let favoritePaths = new Set();
+    let favoriteUpdatedAt = 0;
+    let favoriteDirty = false;
+    let favoritesBridgeFrame = null;
+    let favoritesBridgeReady = null;
+    let favoritesBridgeSequence = 0;
+    const favoritesBridgePending = new Map();
+
+    const copyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>';
+    const openIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>';
+    const closeIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
+
+    function normalizeComfyBase(value) {
+      const parsed = new URL(String(value || "").trim() || DEFAULT_COMFY_BASE);
+      if (!["http:", "https:"].includes(parsed.protocol)) throw new Error("ComfyUI 地址必须以 http:// 或 https:// 开头");
+      parsed.search = "";
+      parsed.hash = "";
+      return parsed.href.replace(/\/+$/, "");
+    }
+    function loadComfyBase() {
+      try {
+        let saved = localStorage.getItem(COMFY_BASE_KEY) || DEFAULT_COMFY_BASE;
+        if (!localStorage.getItem(COMFY_BASE_MIGRATION_KEY)) {
+          const normalized = normalizeComfyBase(saved);
+          try {
+            const legacy = new URL(normalized);
+            if (legacy.port === "8898") {
+              legacy.port = "8188";
+              saved = legacy.href.replace(/\/+$/, "");
+              localStorage.setItem(COMFY_BASE_KEY, saved);
+            }
+          } catch {}
+          localStorage.setItem(COMFY_BASE_MIGRATION_KEY, "1");
+        }
+        return normalizeComfyBase(saved);
+      } catch {
+        return DEFAULT_COMFY_BASE;
+      }
+    }
+    let comfyBase = loadComfyBase();
+    function favoriteKey(row) {
+      return String(row?.relative || "").trim().replace(/\\/g, "/").replace(/^\/+/, "");
+    }
+    function isFavorite(row) {
+      const key = favoriteKey(row);
+      return Boolean(key && favoritePaths.has(key));
+    }
+    function readFavoritesCache() {
+      try {
+        const data = JSON.parse(localStorage.getItem(FAVORITES_CACHE_KEY) || "{}");
+        favoritePaths = new Set(
+          Array.isArray(data.favorites)
+            ? data.favorites.map(value => String(value).replace(/\\/g, "/").replace(/^\/+/, "")).filter(Boolean)
+            : [],
+        );
+        favoriteUpdatedAt = Math.max(0, Number(data.updatedAt) || 0);
+      } catch {
+        favoritePaths = new Set();
+        favoriteUpdatedAt = 0;
+      }
+    }
+    function writeFavoritesCache() {
+      try {
+        localStorage.setItem(FAVORITES_CACHE_KEY, JSON.stringify({
+          updatedAt: favoriteUpdatedAt,
+          favorites: [...favoritePaths],
+        }));
+      } catch {}
+    }
+    function favoritesApiUrl() {
+      return EMBEDDED_MODE ? FAVORITES_API_PATH : `${comfyBase}${FAVORITES_API_PATH}`;
+    }
+    function resetFavoritesBridge() {
+      if (favoritesBridgeFrame) favoritesBridgeFrame.remove();
+      favoritesBridgeFrame = null;
+      favoritesBridgeReady = null;
+      favoritesBridgePending.forEach(({ reject, timer }) => {
+        clearTimeout(timer);
+        reject(new Error("收藏桥已重置"));
+      });
+      favoritesBridgePending.clear();
+    }
+    function ensureFavoritesBridge() {
+      if (favoritesBridgeFrame && favoritesBridgeReady) return favoritesBridgeReady;
+      const frame = document.createElement("iframe");
+      frame.hidden = true;
+      frame.style.display = "none";
+      frame.title = "个人精品本地桥";
+      favoritesBridgeFrame = frame;
+      favoritesBridgeReady = new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error("ComfyUI 收藏桥连接超时")), 8000);
+        frame.onload = () => {
+          clearTimeout(timer);
+          resolve();
+        };
+        frame.onerror = () => {
+          clearTimeout(timer);
+          reject(new Error("ComfyUI 收藏桥加载失败"));
+        };
+        frame.src = `${comfyBase}/extensions/comfyui_workflow_index_bridge/favorites-bridge.html?v=${Date.now()}`;
+        document.body.appendChild(frame);
+      });
+      return favoritesBridgeReady;
+    }
+    function favoritesBridgeRequest(action, payload = null) {
+      return ensureFavoritesBridge().then(() => new Promise((resolve, reject) => {
+        const id = `favorites-${++favoritesBridgeSequence}`;
+        const expectedOrigin = new URL(comfyBase).origin;
+        const timer = setTimeout(() => {
+          favoritesBridgePending.delete(id);
+          reject(new Error("ComfyUI 收藏请求超时"));
+        }, 8000);
+        favoritesBridgePending.set(id, { resolve, reject, timer });
+        favoritesBridgeFrame.contentWindow.postMessage(
+          { type: "dapao:favorites-request", id, action, payload },
+          expectedOrigin,
+        );
+      }));
+    }
+    window.addEventListener("message", event => {
+      const data = event.data;
+      if (!data || data.type !== "dapao:favorites-response") return;
+      if (!favoritesBridgeFrame || event.source !== favoritesBridgeFrame.contentWindow) return;
+      if (event.origin !== new URL(comfyBase).origin) return;
+      const pending = favoritesBridgePending.get(data.id);
+      if (!pending) return;
+      clearTimeout(pending.timer);
+      favoritesBridgePending.delete(data.id);
+      if (data.ok) pending.resolve(data.data);
+      else pending.reject(new Error(data.error || "收藏请求失败"));
+    });
+    async function loadFavoritesRemote() {
+      if (!EMBEDDED_MODE) return favoritesBridgeRequest("get");
+      const response = await fetch(favoritesApiUrl(), { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.json();
+    }
+    async function saveFavoritesRemote(data) {
+      if (!EMBEDDED_MODE) return favoritesBridgeRequest("save", data);
+      const response = await fetch(favoritesApiUrl(), {
+        method: "POST",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.json();
+    }
+    function applyFavoritesPayload(data) {
+      favoritePaths = new Set(
+        Array.isArray(data?.favorites)
+          ? data.favorites.map(value => String(value).replace(/\\/g, "/").replace(/^\/+/, "")).filter(Boolean)
+          : [],
+      );
+      favoriteUpdatedAt = Math.max(0, Number(data?.updatedAt) || 0);
+      favoriteDirty = false;
+      writeFavoritesCache();
+    }
+    async function persistFavorites(showError = false) {
+      favoriteUpdatedAt = Date.now();
+      favoriteDirty = true;
+      writeFavoritesCache();
+      try {
+        const saved = await saveFavoritesRemote({
+          updatedAt: favoriteUpdatedAt,
+          favorites: [...favoritePaths],
+        });
+        applyFavoritesPayload(saved);
+        return true;
+      } catch {
+        favoriteDirty = true;
+        writeFavoritesCache();
+        if (showError) showToast("个人精品已暂存到当前浏览器，ComfyUI 恢复后可同步");
+        return false;
+      }
+    }
+    async function syncFavorites() {
+      try {
+        const remote = await loadFavoritesRemote();
+        if (favoriteDirty || favoriteUpdatedAt > Math.max(0, Number(remote.updatedAt) || 0)) {
+          await persistFavorites(false);
+        } else {
+          applyFavoritesPayload(remote);
+        }
+      } catch {}
+      render();
+    }
+    function toggleFavorite(row) {
+      const key = favoriteKey(row);
+      if (!key) return;
+      if (favoritePaths.has(key)) favoritePaths.delete(key);
+      else favoritePaths.add(key);
+      favoriteUpdatedAt = Date.now();
+      favoriteDirty = true;
+      writeFavoritesCache();
+      render();
+      void persistFavorites(true);
+    }
+    function workflowUrl(row) {
+      let relative = String(row.relative || "").trim().replace(/\\/g, "/").replace(/^\/+/, "");
+      if (!relative) throw new Error("该记录缺少工作流相对路径");
+      if (!relative.startsWith("workflows/")) relative = `workflows/${relative}`;
+      return `${comfyBase}/?workflow=${encodeURIComponent(relative)}`;
+    }
+    function outputMediaUrl(item) {
+      if (!EMBEDDED_MODE) return item.url;
+      const relative = String(item.relative || "").replace(/\\/g, "/").replace(/^\/+/, "");
+      if (!relative) return item.url;
+      const parts = relative.split("/");
+      const filename = parts.pop();
+      const params = new URLSearchParams({ filename, type: "output", subfolder: parts.join("/") });
+      return `/view?${params.toString()}`;
+    }
+    function requestWorkflowOpen(row) {
+      if (!row) return;
+      window.parent.postMessage(
+        { type: "dapao:open-workflow", path: row.relative, name: row.name },
+        window.location.origin,
+      );
+    }
+    function refreshComfyLinks() {
+      document.querySelectorAll("[data-open-index]").forEach(link => {
+        const row = rowByIndex.get(Number(link.dataset.openIndex));
+        if (!row) return;
+        try {
+          link.href = workflowUrl(row);
+          link.removeAttribute("aria-disabled");
+        } catch {
+          link.removeAttribute("href");
+          link.setAttribute("aria-disabled", "true");
+        }
+      });
+      const drawerLink = document.querySelector("[data-open-drawer]");
+      if (drawerLink && drawerRow) drawerLink.href = workflowUrl(drawerRow);
+    }
+    function saveComfyBase() {
+      const input = document.getElementById("comfyBase");
+      try {
+        comfyBase = normalizeComfyBase(input.value);
+        input.value = comfyBase;
+        try { localStorage.setItem(COMFY_BASE_KEY, comfyBase); } catch {}
+        resetFavoritesBridge();
+        refreshComfyLinks();
+        void syncFavorites();
+        showToast("ComfyUI 地址已保存");
+      } catch (error) {
+        input.value = comfyBase;
+        showToast(error.message);
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+    }
+    function formatInline(value) {
+      return escapeHtml(value).replace(/`([^`]+)`/g, "<code>$1</code>");
+    }
+    function splitValues(value) {
+      return String(value || "").split("|").map(item => item.trim()).filter(Boolean);
+    }
+    function compactText(value, limit = 100) {
+      const text = String(value || "").trim();
+      return text.length > limit ? text.slice(0, limit) + "..." : text;
+    }
+    function rank(row) {
+      return priorityOrder[row.priority] ?? 9;
+    }
+    function modelSize(row) {
+      const value = Number.parseFloat(row.modelGB || "0");
+      return Number.isFinite(value) ? value : 0;
+    }
+    function rowSearchText(row) {
+      return [
+        row.name, row.scene, row.sceneDetail, row.features, row.path, row.category, row.filename,
+        row.originalName, row.family, row.models, row.nodes, row.plugins,
+        row.status, row.priority, row.input, row.output, row.apiNodes,
+        row.rating, row.recommendation, row.recommendationTags, row.ratingReason,
+        row.date, row.movedAt, row.storageStatus, row.eModels, row.gOnlyModels,
+        row.gDuplicateModels, row.needsMigration, row.migrationReason
+      ].join(" ").toLocaleLowerCase();
+    }
+    function matchesMedia(row, query) {
+      if (!query) return true;
+      const text = `${row.input} ${row.output}`;
+      return text.includes(query);
+    }
+    function matchesMovedTime(row, period) {
+      if (!period) return true;
+      const moved = new Date(String(row.movedAt || "").replace(" ", "T"));
+      if (Number.isNaN(moved.getTime())) return false;
+      const now = new Date();
+      if (period === "today") {
+        return moved.getFullYear() === now.getFullYear()
+          && moved.getMonth() === now.getMonth()
+          && moved.getDate() === now.getDate();
+      }
+      if (period === "7d") return moved.getTime() >= now.getTime() - 7 * 86400000;
+      if (period === "30d") return moved.getTime() >= now.getTime() - 30 * 86400000;
+      if (period === "month") {
+        return moved.getFullYear() === now.getFullYear()
+          && moved.getMonth() === now.getMonth();
+      }
+      if (period === "year") return moved.getFullYear() === now.getFullYear();
+      return true;
+    }
+    function filteredRows() {
+      const query = document.getElementById("search").value.trim().toLocaleLowerCase();
+      const category = document.getElementById("category").value;
+      const family = document.getElementById("family").value;
+      const tag = document.getElementById("tag").value;
+      const media = document.getElementById("media").value;
+      const contentPresence = document.getElementById("contentPresence").value;
+      const moved = document.getElementById("moved").value;
+      const usableOnly = document.getElementById("usableOnly").checked;
+      const minRating = Number(document.getElementById("rating").value || "0");
+      const recommendation = document.getElementById("recommendation").value;
+      const filtered = rows.filter(row => {
+        if (activeSummaryFilter === "e-storage" && row.storageStatus !== "E盘完整") return false;
+        if (activeSummaryFilter === "g-storage" && !["G盘依赖", "混合来源"].includes(row.storageStatus)) return false;
+        if (activeSummaryFilter === "migration" && row.needsMigration !== "是") return false;
+        if (activeSummaryFilter === "favorites" && !isFavorite(row)) return false;
+        if (query && !rowSearchText(row).includes(query)) return false;
+        if (!selectedPriorities.has(row.priority)) return false;
+        if (!selectedStatuses.has(row.status)) return false;
+        if (category && row.category !== category) return false;
+        if (family && row.family !== family) return false;
+        if (tag && !splitValues(row.recommendationTags).includes(tag)) return false;
+        if (!matchesMedia(row, media)) return false;
+        const mediaItems = Array.isArray(row.media) ? row.media : [];
+        if (contentPresence === "has" && mediaItems.length === 0) return false;
+        if (contentPresence === "none" && mediaItems.length > 0) return false;
+        if (!matchesMovedTime(row, moved)) return false;
+        if (usableOnly && row.status !== "本地可用") return false;
+        if (minRating && Number(row.rating || 0) < minRating) return false;
+        if (recommendation && row.recommendation !== recommendation) return false;
+        return true;
+      });
+      const sort = document.getElementById("sort").value;
+      filtered.sort((a, b) => {
+        if (sort === "premium") {
+          return rank(a) - rank(b)
+            || Number(b.rating || 0) - Number(a.rating || 0)
+            || (statusOrder[a.status] ?? 9) - (statusOrder[b.status] ?? 9)
+            || a.name.localeCompare(b.name, "zh-CN");
+        }
+        if (sort === "name") return a.name.localeCompare(b.name, "zh-CN");
+        if (sort === "date") return String(b.date).localeCompare(String(a.date)) || a.name.localeCompare(b.name, "zh-CN");
+        if (sort === "movedDesc") return String(b.movedAt).localeCompare(String(a.movedAt)) || a.name.localeCompare(b.name, "zh-CN");
+        if (sort === "modelSize") return modelSize(b) - modelSize(a) || rank(a) - rank(b);
+        if (sort === "status") return (statusOrder[a.status] ?? 9) - (statusOrder[b.status] ?? 9) || rank(a) - rank(b);
+        return 0;
+      });
+      return filtered;
+    }
+    function badge(row) {
+      return `<span class="badge priority-${escapeHtml(row.priority)}">${escapeHtml(row.priority)}</span>`;
+    }
+    function statusMarkup(row) {
+      return `<span class="status status-${escapeHtml(row.status)}"><span class="dot"></span>${escapeHtml(row.status)}</span>`;
+    }
+    function storageMarkup(row) {
+      const status = row.storageStatus || "未使用本地模型";
+      const detail = [
+        row.gOnlyModels ? `仅G盘：${row.gOnlyModels}` : "",
+        row.gDuplicateModels ? `E/G重复：${row.gDuplicateModels}` : "",
+      ].filter(Boolean).join("；");
+      return `<span class="storage storage-${escapeHtml(status)}" title="${escapeHtml(detail)}">${escapeHtml(status)}</span>`;
+    }
+    function ratingMarkup(row) {
+      const rating = Math.max(1, Math.min(5, Number(row.rating || 1)));
+      return `<div class="rating"><span class="rating-stars">${"★".repeat(rating)}${"☆".repeat(5-rating)}</span><span class="muted">${rating}</span></div>
+        <span class="rec rec-${escapeHtml(row.recommendation)}">${escapeHtml(row.recommendation)}</span>`;
+    }
+    function mediaMarkup(row) {
+      const media = Array.isArray(row.media) ? row.media : [];
+      if (!media.length) return '<span class="media-empty">—</span>';
+      const visible = media.slice(0, 3);
+      return `<div class="media-strip">${visible.map((item, index) => `
+        <button class="media-thumb" type="button" data-media-row="${row._index}" data-media-index="${index}" title="${escapeHtml(item.name)}">
+          ${item.thumb ? `<img loading="lazy" src="${escapeHtml(item.thumb)}" alt="">` : `<span>♪</span>`}
+          ${item.kind === "video" ? '<span class="play">▶</span>' : ""}
+        </button>`).join("")}
+        ${media.length > 3 ? `<button class="media-more" type="button" data-media-row="${row._index}" data-media-index="0" title="查看全部 ${media.length} 个生成内容">+${media.length - 3}</button>` : ""}
+      </div>`;
+    }
+    function updateSummaryFilterButtons() {
+      document.querySelectorAll("[data-summary-filter]").forEach(button => {
+        button.classList.toggle("active", button.dataset.summaryFilter === activeSummaryFilter);
+      });
+    }
+    function applySummaryFilter(kind) {
+      activeSummaryFilter = activeSummaryFilter === kind ? "" : kind;
+      selectedStatuses.clear();
+      statuses.forEach(value => selectedStatuses.add(value));
+      document.getElementById("recommendation").value = "";
+      if (activeSummaryFilter === "local") {
+        selectedStatuses.clear();
+        selectedStatuses.add("本地可用");
+      } else if (activeSummaryFilter === "api") {
+        selectedStatuses.clear();
+        selectedStatuses.add("需API");
+      } else if (activeSummaryFilter === "missing") {
+        selectedStatuses.clear();
+        selectedStatuses.add("需补模型");
+        selectedStatuses.add("缺模型");
+      } else if (activeSummaryFilter === "recommended") {
+        document.getElementById("recommendation").value = "推荐";
+      } else if (activeSummaryFilter === "favorites") {
+        selectedStatuses.clear();
+        statuses.forEach(value => selectedStatuses.add(value));
+      }
+      makeChips(document.getElementById("statusChips"), statuses, selectedStatuses, "status");
+      updateSummaryFilterButtons();
+      render();
+    }
+    function rowMarkup(row) {
+      const premium = row.recommendation === "推荐";
+      const tags = splitValues(row.recommendationTags).slice(0, 3);
+      return `
+        <tr class="${premium ? "premium" : ""}" data-row-index="${row._index}">
+          <td>
+            <div class="name-line">
+              <div class="name">${escapeHtml(row.name)}</div>
+              <button class="favorite-toggle ${isFavorite(row) ? "active" : ""}" type="button" data-favorite-index="${row._index}" title="${isFavorite(row) ? "取消个人精品" : "加入个人精品"}" aria-label="${isFavorite(row) ? "取消个人精品" : "加入个人精品"}" aria-pressed="${isFavorite(row)}">${isFavorite(row) ? "★" : "+"}</button>
+              ${EMBEDDED_MODE ? `<button class="inline-open" type="button" data-open-index="${row._index}" title="载入此工作流">载入</button>` : ""}
+            </div>
+            <div class="subline">${badge(row)} <span>${escapeHtml(row.family)}</span></div>
+            <div class="mini-tags">${tags.map(tag => `<span class="mini-tag">${escapeHtml(tag)}</span>`).join("")}</div>
+          </td>
+          <td>${ratingMarkup(row)}</td>
+          <td>${statusMarkup(row)}</td>
+          <td>${storageMarkup(row)}</td>
+          <td><span class="moved-time">${escapeHtml(row.movedAt || "—")}</span></td>
+          <td title="${escapeHtml(row.sceneDetail || row.scene)}"><div class="scene-note">${escapeHtml(row.sceneDetail || row.scene)}</div></td>
+          <td><div class="feature" title="${escapeHtml(row.features)}">${escapeHtml(row.features || "—")}</div></td>
+          <td title="${escapeHtml(row.models)}">${escapeHtml(row.family || "—")}</td>
+          <td class="io">${escapeHtml(row.input || "—")} → ${escapeHtml(row.output || "—")}</td>
+          <td>${mediaMarkup(row)}</td>
+          <td>
+            <div class="path-cell">
+              <span class="path-text" title="${escapeHtml(row.path)}">${escapeHtml(row.path)}</span>
+              <a class="icon-button open-row" href="${escapeHtml(workflowUrl(row))}" target="_blank" rel="noopener noreferrer" data-open-index="${row._index}" title="在 ComfyUI 打开" aria-label="在 ComfyUI 打开">${openIcon}</a>
+              <button class="icon-button copy-row" type="button" data-copy-index="${row._index}" title="复制绝对路径" aria-label="复制绝对路径">${copyIcon}</button>
+            </div>
+          </td>
+        </tr>`;
+    }
+    function render() {
+      currentRows = filteredRows();
+      document.getElementById("rows").innerHTML = currentRows.map(rowMarkup).join("");
+      document.getElementById("empty").hidden = currentRows.length > 0;
+      document.getElementById("visibleCount").textContent = currentRows.length;
+      document.getElementById("totalCount").textContent = rows.length;
+      document.getElementById("localCount").textContent = currentRows.filter(row => row.status === "本地可用").length;
+      document.getElementById("eStorageCount").textContent = currentRows.filter(row => row.storageStatus === "E盘完整").length;
+      document.getElementById("gStorageCount").textContent = currentRows.filter(row => ["G盘依赖", "混合来源"].includes(row.storageStatus)).length;
+      document.getElementById("migrationWorkflowCount").textContent = currentRows.filter(row => row.needsMigration === "是").length;
+      document.getElementById("favoriteCount").textContent = currentRows.filter(row => isFavorite(row)).length;
+      document.getElementById("recommendedCount").textContent = currentRows.filter(row => row.recommendation === "推荐").length;
+      document.getElementById("apiCount").textContent = currentRows.filter(row => row.status === "需API").length;
+      document.getElementById("missingCount").textContent = currentRows.filter(row => ["需补模型", "缺模型"].includes(row.status)).length;
+      const sort = document.getElementById("sort").value;
+      const hints = {
+        premium: "12G首选 / 场景主流程 / FLUX3专题 / 精品展示优先，同层按评级",
+        name: "按工作流名称",
+        date: "按日期从新到旧",
+        movedDesc: "按移入时间从新到旧",
+        modelSize: "按模型体积从大到小",
+        status: "按可用状态"
+      };
+      document.getElementById("sortHint").textContent = hints[sort];
+      updateSummaryFilterButtons();
+    }
+    function makeChips(container, values, selected, kind) {
+      container.innerHTML = values.map(value =>
+        `<button class="chip ${selected.has(value) ? "active" : ""}" type="button" data-kind="${kind}" data-value="${escapeHtml(value)}">${escapeHtml(value)}</button>`
+      ).join("");
+    }
+    function initSelect(id, values) {
+      const select = document.getElementById(id);
+      const first = select.options[0].outerHTML;
+      select.innerHTML = first + values.map(value => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("");
+    }
+    function setView(view) {
+      const showIndex = view === "index";
+      const showScenes = view === "scenes";
+      const showMigrations = view === "migrations";
+      document.getElementById("indexView").hidden = !showIndex;
+      document.getElementById("sceneView").hidden = !showScenes;
+      document.getElementById("migrationView").hidden = !showMigrations;
+      document.querySelectorAll("[data-view-tab]").forEach(button => {
+        button.classList.toggle("active", button.dataset.viewTab === view);
+      });
+      document.getElementById("copyFiltered").hidden = !showIndex;
+      if (showMigrations) renderMigrations();
+      window.scrollTo(0, 0);
+    }
+    function rowsForGuideName(name) {
+      const clean = String(name || "").split("/").pop().replace(/\.json$/i, "").trim();
+      const candidates = rows.filter(row => row.name === name || row.name === clean);
+      const best = candidates.sort((a, b) =>
+        rank(a) - rank(b)
+        || Number(b.rating || 0) - Number(a.rating || 0)
+        || a.relative.localeCompare(b.relative, "zh-CN")
+      )[0];
+      return best ? [best] : [];
+    }
+    function renderSceneGuides() {
+      const date = sceneGuides.updatedAt ? `模型建议更新于 ${sceneGuides.updatedAt}` : "场景模型建议与工作流覆盖";
+      document.getElementById("sceneGuideDate").textContent = date;
+
+      document.getElementById("rankingGrid").innerHTML = (sceneGuides.rankings || []).map(group => `
+        <section class="ranking-block">
+          <h3>${escapeHtml(group.title)}</h3>
+          <ol class="ranking-list">${(group.items || []).map(item => `<li>${formatInline(item)}</li>`).join("")}</ol>
+        </section>`).join("");
+
+      const sceneModels = sceneGuides.sceneModels || { headers: [], rows: [] };
+      document.getElementById("sceneModelHead").innerHTML = `<tr>${(sceneModels.headers || []).map(value => `<th>${escapeHtml(value)}</th>`).join("")}</tr>`;
+      document.getElementById("sceneModelBody").innerHTML = (sceneModels.rows || []).map(row => `
+        <tr>${row.map(value => `<td>${formatInline(value)}</td>`).join("")}</tr>`).join("");
+
+      const coverage = sceneGuides.coverage || [];
+      document.getElementById("coverageHead").innerHTML = "<tr><th>场景</th><th>本地代表工作流</th><th>当前结论</th></tr>";
+      let localCoverage = 0;
+      document.getElementById("coverageBody").innerHTML = coverage.map(row => {
+        const matches = [...new Set((row.workflowNames || []).flatMap(rowsForGuideName))];
+        if (matches.length) localCoverage += 1;
+        const links = matches.length
+          ? `<div class="scene-workflow-links">${matches.map(match => `<button class="scene-workflow-link" type="button" data-find-workflow="${match._index}">定位：${escapeHtml(match.name)}</button>`).join("")}</div>`
+          : `<div class="scene-unmatched">当前索引中没有可定位代表工作流</div>`;
+        return `<tr>
+          <td>${formatInline(row.scene)}</td>
+          <td>${formatInline(row.representative)}${links}</td>
+          <td>${formatInline(row.conclusion)}</td>
+        </tr>`;
+      }).join("");
+      document.getElementById("sceneCoverageSummary").textContent = `本地可定位代表 ${localCoverage} / ${coverage.length} 个场景`;
+    }
+    function renderMigrations() {
+      const allModels = Array.isArray(modelMigrations.models) ? modelMigrations.models : [];
+      const models = activeMigrationPriority
+        ? allModels.filter(item => item.priority === activeMigrationPriority)
+        : allModels;
+      const highCount = allModels.filter(item => item.priority === "高").length;
+      const totalGB = allModels.reduce((sum, item) => sum + (Number(item.sizeGB) || 0), 0);
+      document.getElementById("migrationSummary").textContent =
+        `G盘独有 ${allModels.length} 个模型 · 共 ${totalGB.toFixed(1)} GB · 高优先级 ${highCount} 个`;
+      document.querySelectorAll("[data-migration-filter]").forEach(button => {
+        button.classList.toggle("active", button.dataset.migrationFilter === activeMigrationPriority);
+      });
+      document.getElementById("migrationEmpty").hidden = models.length > 0;
+      document.getElementById("migrationList").innerHTML = models.map(item => {
+        const samples = Array.isArray(item.sampleWorkflows) ? item.sampleWorkflows : [];
+        return `<article class="migration-card priority-${escapeHtml(item.priority)}">
+          <div class="migration-card-head">
+            <div class="migration-file">${escapeHtml(item.fileName)}</div>
+            <span class="migration-priority">${escapeHtml(item.priority)}</span>
+          </div>
+          <div class="migration-meta">${escapeHtml(item.category)} · ${Number(item.sizeGB || 0).toFixed(2)} GB · 引用 ${Number(item.workflowCount) || 0} 个 · 当前 ${Number(item.activeWorkflowCount) || 0} 个 · 高优先 ${Number(item.hotWorkflowCount) || 0} 个</div>
+          <div class="migration-meta">${escapeHtml(item.reason || "")}</div>
+          ${samples.length ? `<div class="migration-meta">示例：${samples.map(escapeHtml).join("、")}</div>` : ""}
+          <div class="migration-paths">
+            <div class="migration-path">G源：${escapeHtml(item.sourcePath || "")}</div>
+            <div class="migration-path">E目标：${escapeHtml(item.targetPath || "")}</div>
+          </div>
+          <div class="migration-actions">
+            <button class="button quiet" type="button" data-copy-migration-source="${escapeHtml(item.sourcePath || "")}">复制G源路径</button>
+            <button class="button quiet" type="button" data-copy-migration-target="${escapeHtml(item.targetPath || "")}">复制E目标路径</button>
+          </div>
+        </article>`;
+      }).join("");
+    }
+    function focusWorkflowFromScene(index) {
+      const row = rowByIndex.get(Number(index));
+      if (!row) return;
+      setView("index");
+      document.getElementById("reset").click();
+      document.getElementById("category").value = row.category;
+      selectedPriorities.clear();
+      selectedPriorities.add(row.priority);
+      makeChips(document.getElementById("priorityChips"), priorities, selectedPriorities, "priority");
+      document.getElementById("search").value = row.name;
+      render();
+      document.getElementById("search").scrollIntoView({ block: "start" });
+    }
+    function init() {
+      readFavoritesCache();
+      document.getElementById("comfyBase").value = comfyBase;
+      const categories = [...new Set(rows.map(row => row.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, "zh-CN"));
+      const families = [...new Set(rows.map(row => row.family).filter(Boolean))].sort((a, b) => a.localeCompare(b, "zh-CN"));
+      const tags = [...new Set(rows.flatMap(row => splitValues(row.recommendationTags)))].sort((a, b) => a.localeCompare(b, "zh-CN"));
+      initSelect("category", categories);
+      initSelect("family", families);
+      initSelect("tag", tags);
+      makeChips(document.getElementById("priorityChips"), priorities, selectedPriorities, "priority");
+      makeChips(document.getElementById("statusChips"), statuses, selectedStatuses, "status");
+      render();
+      renderSceneGuides();
+      setView(location.hash === "#scenes" ? "scenes" : location.hash === "#migrations" ? "migrations" : "index");
+      void syncFavorites();
+    }
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (error) {
+        const area = document.createElement("textarea");
+        area.value = text;
+        area.style.position = "fixed";
+        area.style.opacity = "0";
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand("copy");
+        area.remove();
+      }
+      showToast("路径已复制");
+    }
+    let toastTimer = null;
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 1600);
+    }
+    function showMediaItem(index) {
+      if (!currentMediaRow || !currentMediaItems.length) return;
+      const item = currentMediaItems[index];
+      if (!item) return;
+      const viewer = document.getElementById("mediaViewer");
+      if (item.kind === "image") {
+        viewer.innerHTML = `<img src="${escapeHtml(outputMediaUrl(item))}" alt="${escapeHtml(item.name)}">`;
+      } else if (item.kind === "video") {
+        viewer.innerHTML = `<video controls autoplay playsinline preload="metadata" src="${escapeHtml(outputMediaUrl(item))}"${item.thumb ? ` poster="${escapeHtml(item.thumb)}"` : ""}></video>`;
+      } else {
+        viewer.innerHTML = `<audio controls autoplay preload="metadata" src="${escapeHtml(outputMediaUrl(item))}"></audio>`;
+      }
+      const details = [
+        item.name,
+        item.modified,
+        item.dimensions,
+        item.duration ? `${item.duration}s` : ""
+      ].filter(Boolean);
+      document.getElementById("mediaCaption").textContent = details.join(" · ");
+      document.querySelectorAll("[data-media-tab]").forEach(tab => {
+        tab.classList.toggle("active", Number(tab.dataset.mediaTab) === index);
+      });
+    }
+    function openMediaModal(row, startIndex = 0) {
+      const media = Array.isArray(row?.media) ? row.media : [];
+      if (!media.length) {
+        showToast("该工作流还没有已关联的生成内容");
+        return;
+      }
+      currentMediaRow = row;
+      currentMediaItems = media;
+      document.getElementById("mediaModalTitle").textContent = `${row.name} · ${media.length} 个生成内容`;
+      document.getElementById("mediaTabs").innerHTML = media.map((item, index) => `
+        <button class="media-tab ${item.kind === "audio" ? "audio" : ""}" type="button" data-media-tab="${index}" title="${escapeHtml(item.name)}">
+          ${item.thumb ? `<img loading="lazy" src="${escapeHtml(item.thumb)}" alt="">` : "♪"}
+        </button>`).join("");
+      document.getElementById("mediaModal").classList.add("open");
+      document.getElementById("mediaModal").setAttribute("aria-hidden", "false");
+      showMediaItem(Math.max(0, Math.min(Number(startIndex) || 0, media.length - 1)));
+    }
+    function closeMediaModal() {
+      currentMediaRow = null;
+      currentMediaItems = [];
+      document.getElementById("mediaModal").classList.remove("open");
+      document.getElementById("mediaModal").setAttribute("aria-hidden", "true");
+      document.getElementById("mediaViewer").innerHTML = "";
+      document.getElementById("mediaCaption").textContent = "";
+      document.getElementById("mediaTabs").innerHTML = "";
+    }
+    function openDrawer(row) {
+      drawerRow = row;
+      document.getElementById("drawerTitle").textContent = row.name;
+      const tags = values => values.length
+        ? `<div class="tag-list">${values.map(value => `<span class="tag">${escapeHtml(value)}</span>`).join("")}</div>`
+        : `<span class="muted">—</span>`;
+      const mediaAction = Array.isArray(row.media) && row.media.length
+        ? `<button class="button dark" type="button" data-open-media-drawer>▶ 查看生成内容 (${row.media.length})</button>`
+        : "";
+      document.getElementById("drawerBody").innerHTML = `
+        <div class="detail-actions">
+          <a class="button dark" href="${escapeHtml(workflowUrl(row))}" target="_blank" rel="noopener noreferrer" data-open-drawer>${openIcon} 在 ComfyUI 打开</a>
+          <button class="button dark" type="button" data-copy-drawer>${copyIcon} 复制绝对路径</button>
+          ${mediaAction}
+        </div>
+        <div class="detail-path">${escapeHtml(row.path)}</div>
+        <dl class="detail-grid">
+          <dt>优先级</dt><dd>${badge(row)}</dd>
+          <dt>评级</dt><dd>${ratingMarkup(row)}</dd>
+          <dt>推荐级别</dt><dd><span class="rec rec-${escapeHtml(row.recommendation)}">${escapeHtml(row.recommendation)}</span></dd>
+          <dt>状态</dt><dd>${statusMarkup(row)}</dd>
+          <dt>适用场景</dt><dd>${escapeHtml(row.sceneDetail || row.scene || "—")}</dd>
+          <dt>模型族</dt><dd>${escapeHtml(row.family || "—")}</dd>
+          <dt>输入输出</dt><dd>${escapeHtml(row.input || "—")} → ${escapeHtml(row.output || "—")}</dd>
+          <dt>尺寸 / 步数</dt><dd>${escapeHtml(row.size || "—")} / ${escapeHtml(row.steps || "—")}</dd>
+          <dt>模型体积</dt><dd>${row.modelGB ? `${escapeHtml(row.modelGB)} GB` : "—"}</dd>
+          <dt>模型来源</dt><dd>${escapeHtml(row.modelSource || "—")}</dd>
+          <dt>日期</dt><dd>${escapeHtml(row.date || "—")}</dd>
+          <dt>移入时间</dt><dd>${escapeHtml(row.movedAt || "—")}</dd>
+          <dt>节点数</dt><dd>${escapeHtml(row.nodeCount || "—")}</dd>
+          <dt>原文件名</dt><dd>${escapeHtml(row.originalName || row.filename)}</dd>
+        </dl>
+        <section class="detail-section"><h3>核心功能</h3>${tags(splitValues(row.features))}</section>
+        <section class="detail-section"><h3>推荐标签</h3>${tags(splitValues(row.recommendationTags))}</section>
+        <section class="detail-section"><h3>评级理由</h3><div>${escapeHtml(row.ratingReason || "—")}</div></section>
+        <section class="detail-section"><h3>加载器模型</h3>${tags(splitValues(row.models))}</section>
+        <section class="detail-section"><h3>API 节点</h3>${tags(splitValues(row.apiNodes))}</section>
+        <section class="detail-section"><h3>缺失模型</h3>${tags(splitValues(row.missing))}</section>
+        <section class="detail-section"><h3>插件依赖</h3>${tags(splitValues(row.plugins))}</section>
+        <section class="detail-section"><h3>节点清单</h3>${tags(splitValues(row.nodes))}</section>
+        <section class="detail-section"><h3>重复关系</h3><div>${escapeHtml(row.duplicateOf || "—")}</div></section>
+        <section class="detail-section"><h3>SHA256</h3><div class="detail-path">${escapeHtml(row.sha || "—")}</div></section>`;
+      document.getElementById("drawer").classList.add("open");
+      document.getElementById("drawer").setAttribute("aria-hidden", "false");
+      document.getElementById("overlay").classList.add("open");
+    }
+    function closeDrawer() {
+      drawerRow = null;
+      document.getElementById("drawer").classList.remove("open");
+      document.getElementById("drawer").setAttribute("aria-hidden", "true");
+      document.getElementById("overlay").classList.remove("open");
+    }
+    document.addEventListener("click", event => {
+      const viewTab = event.target.closest("[data-view-tab]");
+      if (viewTab) {
+        setView(viewTab.dataset.viewTab);
+        return;
+      }
+      const migrationFilter = event.target.closest("[data-migration-filter]");
+      if (migrationFilter) {
+        activeMigrationPriority = migrationFilter.dataset.migrationFilter || "";
+        renderMigrations();
+        return;
+      }
+      const copyMigrationSource = event.target.closest("[data-copy-migration-source]");
+      if (copyMigrationSource) {
+        copyText(copyMigrationSource.dataset.copyMigrationSource || "");
+        return;
+      }
+      const copyMigrationTarget = event.target.closest("[data-copy-migration-target]");
+      if (copyMigrationTarget) {
+        copyText(copyMigrationTarget.dataset.copyMigrationTarget || "");
+        return;
+      }
+      const sceneWorkflow = event.target.closest("[data-find-workflow]");
+      if (sceneWorkflow) {
+        focusWorkflowFromScene(sceneWorkflow.dataset.findWorkflow);
+        return;
+      }
+      const favoriteButton = event.target.closest("[data-favorite-index]");
+      if (favoriteButton) {
+        event.preventDefault();
+        event.stopPropagation();
+        const row = rowByIndex.get(Number(favoriteButton.dataset.favoriteIndex));
+        if (row) toggleFavorite(row);
+        return;
+      }
+      const mediaButton = event.target.closest("[data-media-row]");
+      if (mediaButton) {
+        event.stopPropagation();
+        const row = rowByIndex.get(Number(mediaButton.dataset.mediaRow));
+        if (row) openMediaModal(row, Number(mediaButton.dataset.mediaIndex || 0));
+        return;
+      }
+      const mediaTab = event.target.closest("[data-media-tab]");
+      if (mediaTab) {
+        event.stopPropagation();
+        showMediaItem(Number(mediaTab.dataset.mediaTab));
+        return;
+      }
+      if (event.target.closest("[data-open-media-drawer]")) {
+        if (drawerRow) openMediaModal(drawerRow, 0);
+        return;
+      }
+      const summaryFilter = event.target.closest("[data-summary-filter]");
+      if (summaryFilter) {
+        event.stopPropagation();
+        applySummaryFilter(summaryFilter.dataset.summaryFilter);
+        return;
+      }
+      const openRow = event.target.closest("[data-open-index]");
+      if (EMBEDDED_MODE && openRow) {
+        event.preventDefault();
+        event.stopPropagation();
+        const row = rowByIndex.get(Number(openRow.dataset.openIndex));
+        requestWorkflowOpen(row);
+        return;
+      }
+      const openDrawerLink = event.target.closest("[data-open-drawer]");
+      if (EMBEDDED_MODE && openDrawerLink && drawerRow) {
+        event.preventDefault();
+        event.stopPropagation();
+        requestWorkflowOpen(drawerRow);
+        return;
+      }
+      const copyButton = event.target.closest("[data-copy-index]");
+      if (copyButton) {
+        event.stopPropagation();
+        const row = rowByIndex.get(Number(copyButton.dataset.copyIndex));
+        if (row) copyText(row.path);
+        return;
+      }
+      if (event.target.closest("[data-copy-drawer]")) {
+        if (drawerRow) copyText(drawerRow.path);
+        return;
+      }
+      const chip = event.target.closest(".chip");
+      if (chip) {
+        const set = chip.dataset.kind === "priority" ? selectedPriorities : selectedStatuses;
+        if (set.has(chip.dataset.value)) set.delete(chip.dataset.value);
+        else set.add(chip.dataset.value);
+        if (chip.dataset.kind === "status") {
+          activeSummaryFilter = "";
+          updateSummaryFilterButtons();
+        }
+        chip.classList.toggle("active");
+        render();
+        return;
+      }
+      const rowElement = event.target.closest("tr[data-row-index]");
+      if (rowElement) {
+        const row = rowByIndex.get(Number(rowElement.dataset.rowIndex));
+        if (row && EMBEDDED_MODE) requestWorkflowOpen(row);
+        else if (row) openDrawer(row);
+      }
+    });
+    document.getElementById("copyFiltered").addEventListener("click", () => {
+      const paths = [...new Set(currentRows.map(row => row.path))];
+      if (paths.length) copyText(paths.join("\n"));
+    });
+    document.getElementById("comfyBase").addEventListener("change", saveComfyBase);
+    document.getElementById("comfyBase").addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        saveComfyBase();
+        event.currentTarget.blur();
+      }
+    });
+    document.getElementById("overlay").addEventListener("click", closeDrawer);
+    document.getElementById("drawerClose").addEventListener("click", closeDrawer);
+    document.getElementById("mediaModalClose").addEventListener("click", closeMediaModal);
+    document.getElementById("mediaModal").addEventListener("click", event => {
+      if (event.target.id === "mediaModal") closeMediaModal();
+    });
+    document.getElementById("search").addEventListener("input", render);
+    ["sort", "rating", "recommendation", "category", "family", "tag", "media", "contentPresence", "moved", "usableOnly"].forEach(id => {
+      document.getElementById(id).addEventListener("change", () => {
+        if (["rating", "recommendation", "category", "family", "tag", "media", "contentPresence", "moved", "usableOnly"].includes(id)) {
+          activeSummaryFilter = "";
+        }
+        render();
+      });
+    });
+    document.getElementById("reset").addEventListener("click", () => {
+      document.getElementById("search").value = "";
+      document.getElementById("sort").value = "premium";
+      document.getElementById("rating").value = "";
+      document.getElementById("recommendation").value = "";
+      document.getElementById("category").value = "";
+      document.getElementById("family").value = "";
+      document.getElementById("tag").value = "";
+      document.getElementById("media").value = "";
+      document.getElementById("contentPresence").value = "";
+      document.getElementById("moved").value = "";
+      document.getElementById("usableOnly").checked = false;
+      activeSummaryFilter = "";
+      activeMigrationPriority = "";
+      selectedPriorities.clear();
+      priorities.forEach(value => selectedPriorities.add(value));
+      selectedStatuses.clear();
+      statuses.forEach(value => selectedStatuses.add(value));
+      makeChips(document.getElementById("priorityChips"), priorities, selectedPriorities, "priority");
+      makeChips(document.getElementById("statusChips"), statuses, selectedStatuses, "status");
+      render();
+      renderMigrations();
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "/" && document.activeElement?.tagName !== "INPUT") {
+        event.preventDefault();
+        document.getElementById("search").focus();
+      }
+      if (event.key === "Escape") {
+        if (document.getElementById("mediaModal").classList.contains("open")) closeMediaModal();
+        else closeDrawer();
+      }
+    });
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# Generated locally from private ComfyUI data
+_媒体预览缓存/
+模型迁移清单.json
+工作流总索引.csv
+工作流总索引.html
+workflow-index.html
+媒体预览测试.html
+分类导航.md
+comfyui_workflow_index_bridge/web/index.html
+
+*.log
